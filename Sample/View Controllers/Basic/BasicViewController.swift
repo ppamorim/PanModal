@@ -47,19 +47,20 @@ extension BasicViewController: PanModalPresentable {
     }
 
     var longForm: PanModalHeight {
-        return .maxHeightWithTopInset(200)
+//        return .contentHeight(300)
+        return .maxHeight
     }
 
     var anchorModalToLongForm: Bool {
         return true
     }
 
-    var horizontalOffset: CGFloat {
-        return 40
-    }
-
-    var verticalOffset: CGFloat {
-        return 40.0
-    }
+//    var horizontalOffset: CGFloat {
+//        return 40
+//    }
+//
+//    var verticalOffset: CGFloat {
+//        return 40.0
+//    }
 
 }

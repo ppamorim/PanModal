@@ -188,6 +188,8 @@ open class PanModalPresentationController: UIPresentationController {
      by swiping it down or by calling the function `dismiss(_)`.
      */
     private var dismissFromGestureRecognizer: Bool = false
+  
+    private var layoutPresentable: PanModalPresentable.LayoutType?
 
     // MARK: - Deinitializers
 
@@ -411,42 +413,44 @@ private extension PanModalPresentationController {
         guard let containerViewFrame: CGRect = containerView?.frame else {
             return
         }
-
+      
+        let longFormPosition = layoutPresentable?.longFormPosition ?? 0.0
+      
         let adjustedSize: CGSize
         if self.presentable?.orientation == .vertical {
             let horizontalOffset: CGFloat = presentable?.horizontalOffset ?? 0.0
+            let anchoredVerticalPosition = anchorModalToLongForm ? longFormPosition : (presentable?.verticalOffset ?? 0)
             adjustedSize = CGSize(
                 width: containerViewFrame.size.width - horizontalOffset,
-                height: containerViewFrame.size.height - self.anchoredVerticalPosition
+                height: containerViewFrame.size.height - anchoredVerticalPosition
             )
             panContainerView.frame.origin.x = horizontalOffset/2.0
+            presentedView.frame.origin.y = containerViewFrame.size.height - panContainerView.frame.height
         } else {
             let verticalOffset: CGFloat = presentable?.verticalOffset ?? 0.0
+            let anchoredHorizontalPosition = anchorModalToLongForm ? longFormPosition : (presentable?.horizontalOffset ?? 0)
             adjustedSize = CGSize(
-                width: containerViewFrame.size.width - self.anchoredHorizontalPosition,
+                width: containerViewFrame.size.width - anchoredHorizontalPosition,
                 height: containerViewFrame.size.height - verticalOffset
             )
             panContainerView.frame.origin.y = verticalOffset/2.0
+            presentedView.frame.origin.x = containerViewFrame.size.width - panContainerView.frame.width
         }
-
+        
         panContainerView.frame.size = adjustedSize
 
         if self.presentable?.orientation == .vertical {
             if ![shortFormPosition, longFormPosition].contains(panContainerView.frame.origin.y) {
                 // if the container is already in the correct position, no need to adjust positioning
                 // (rotations & size changes cause positioning to be out of sync)
-                let yPosition = panContainerView.frame.origin.y - panContainerView.frame.height + containerViewFrame.height
-                presentedView.frame.origin.y = max(yPosition, anchoredVerticalPosition)
-                //                dragIndicatorView.frame.origin.y = presentedView.frame.origin.y - Constants.indicatorOffset
-                //              print("presentedView.frame.origin.y2 \(presentedView.frame.origin.y)")
+                presentedView.frame.origin.y = containerViewFrame.size.height - panContainerView.frame.height
             }
         } else {
             if ![shortFormPosition, longFormPosition].contains(panContainerView.frame.origin.x) {
                 // if the container is already in the correct position, no need to adjust positioning
                 // (rotations & size changes cause positioning to be out of sync)
-                let xPosition = panContainerView.frame.origin.x - panContainerView.frame.width + containerViewFrame.width
-                presentedView.frame.origin.x = max(xPosition, anchoredHorizontalPosition)
-                dragIndicatorView.frame.origin.x = presentedView.frame.origin.x - Constants.indicatorOffset
+//                let xPosition = panContainerView.frame.origin.x - panContainerView.frame.width + containerViewFrame.width
+                presentedView.frame.origin.x = containerViewFrame.size.width - panContainerView.frame.width
             }
         }
 
@@ -509,6 +513,7 @@ private extension PanModalPresentationController {
         guard let layoutPresentable = presentedViewController as? PanModalPresentable.LayoutType else {
             return
         }
+        self.layoutPresentable = layoutPresentable
 
         shortFormPosition = layoutPresentable.shortFormPosition
         longFormPosition = layoutPresentable.longFormPosition
