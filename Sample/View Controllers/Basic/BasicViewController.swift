@@ -43,23 +43,23 @@ extension BasicViewController: PanModalPresentable {
     }
 
     var panScrollable: UIScrollView? {
-        return nil
+        nil
     }
 
     var longForm: PanModalHeight {
-        return .maxHeightWithTopInset(200)
+        .maxHeightWithTopInset(200)
     }
 
     var anchorModalToLongForm: Bool {
-        return true
+        true
     }
 
     var horizontalOffset: CGFloat {
-        return 40
+        0.0
     }
 
     var verticalOffset: CGFloat {
-        return 40.0
+        0.0
     }
 
 }

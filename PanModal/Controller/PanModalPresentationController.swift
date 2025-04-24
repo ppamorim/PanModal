@@ -1049,16 +1049,17 @@ private extension PanModalPresentationController {
             return
         }
 
-        let maskedCorners: CACornerMask = CACornerMask(
-            rawValue: createMask(
-                corners: self.presentable?.orientation == .vertical
-                ? [.topLeft, .topRight]
-                : [.topLeft, .bottomLeft]))
-
         view.layer.cornerRadius = radius
         view.layer.masksToBounds = true
 
         if #available(iOS 11.0, *) {
+            let maskedCorners: CACornerMask = CACornerMask(
+                rawValue: createMask(
+                    corners: self.presentable?.orientation == .vertical
+                    ? [.topLeft, .topRight]
+                    : [.topLeft, .bottomLeft]
+                )
+            )
             view.layer.maskedCorners = maskedCorners
             if #available(iOS 13.0, *) {
                 view.layer.cornerCurve = .continuous
@@ -1074,6 +1075,7 @@ private extension PanModalPresentationController {
              topLeft
     }
 
+    @available(iOS 11.0, *)
     private func parseCorner(corner: Corner) -> CACornerMask.Element {
         let corners: [CACornerMask.Element] = [
             .layerMaxXMaxYCorner,
@@ -1084,6 +1086,7 @@ private extension PanModalPresentationController {
         return corners[corner.rawValue]
     }
 
+    @available(iOS 11.0, *)
     private func createMask(corners: [Corner]) -> UInt {
         corners.reduce(0, { (a, b) -> UInt in a + parseCorner(corner: b).rawValue })
     }
